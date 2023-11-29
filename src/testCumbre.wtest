@@ -1,0 +1,55 @@
+import conocimientos.*
+import cumbre.*
+import paises.*
+import participantes.*
+
+describe 'Cumbre de Sofware'{
+	const argentina = new Pais()
+	const brasil = new Pais()
+	const colombia = new Pais()
+	const coreaDelNorte = new Pais()
+	const coreaDelSur = new Pais()
+	const juana = new Programador(pais=argentina,commits=600)
+	const lucia = new Programador(pais=brasil,commits=800)
+	const mariana = new Especialista(pais=argentina,commits=200)
+	const susana = new Especialista(pais=colombia,commits=1500)
+	
+	
+	test 'países con participantes Argentina y Brasil, 2 participantes de Argentina y 1 de Brasil,
+		  país con más participantes Argentina, la cumbre es relevante'{
+		
+		juana.agregarConocimientos([programacionBasica,css,html])
+		lucia.agregarConocimientos([programacionBasica,basesDeDatos])
+		mariana.agregarConocimientos([programacionBasica,instalacionLinux,objetos,disenioConObjetos])
+		susana.agregarConocimientos([programacionBasica,objetos])
+		cumbre.ingresarParticipantes([juana,lucia,mariana])
+		
+		assert.equals(#{argentina,brasil} , cumbre.paisesDeLosParticipantes())
+		assert.equals(argentina, cumbre.paisConMasPartic())
+		assert.equals(2, cumbre.cantDeParticDePais(argentina))
+		assert.that(cumbre.esRelevante())
+	}
+	test 'agregamos a Susana, ahora los países con participantes son Argentina, Brasil y Colombia,
+		  el país con más participantes sigue siendo Argentina, ahora la cumbre no es relevante '{
+		
+		cumbre.ingresarParticipantes([juana,lucia,mariana,susana])
+		
+		assert.equals(#{argentina,brasil,colombia} , cumbre.paisesDeLosParticipantes())
+		assert.equals(argentina, cumbre.paisConMasPartic())
+		assert.equals(2, cumbre.cantDeParticDePais(argentina))
+		assert.notThat(cumbre.esRelevante())
+	}
+	test 'Corea del Sur es conflictivo para la cumbre a partir del conflicto que tiene con Corea del Norte,
+		  países auspiciantes: Argentina, Colombia y Corea del Norte,participante extranjera es Lucía.'{
+		  	
+		cumbre.agregarPaisesAuspiciantes([argentina,colombia,coreaDelNorte])
+		coreaDelSur.registrarConflicto(coreaDelNorte)
+		cumbre.ingresarParticipantes([juana,lucia,mariana,susana])
+		assert.that(cumbre.esConflictivo(coreaDelSur))
+		assert.equals(#{lucia}, cumbre.particExtranjeros())
+	}
+}
+
+
+
+
